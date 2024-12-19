@@ -69,18 +69,78 @@ def extract_keywords(folder_path, dest_folder, keywords):
 st.title("📊 Excel Keyword Extractor")
 st.markdown("**Upload your Excel files and find specific data based on keywords!** 🔍")
 
+# Add hoverable text for instructions
+st.markdown(
+    """
+    <style>
+    .hover-tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        color: #007bff;
+    }
+
+    .hover-tooltip .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .hover-tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+    </style>
+
+    <div class="hover-tooltip">
+        How does this work?
+        <span class="tooltip-text">Upload Excel files, specify keywords, and extract matching rows.</span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Input Section
-folder_path = st.text_input("Enter the path of the folder containing Excel files:", value=os.getcwd())
-dest_folder = st.text_input("Enter the path of the destination folder:", value=os.path.join(os.getcwd(), "results"))
-keywords = st.text_area("Enter keywords (comma-separated):")
-keyword_file = st.file_uploader("Or upload a .txt file with keywords:", type=["txt"])
+folder_path = st.text_input(
+    "Enter the path of the folder containing Excel files:",
+    value=os.getcwd(),
+    help="Specify the folder where your Excel files are located."
+)
+
+dest_folder = st.text_input(
+    "Enter the path of the destination folder:",
+    value=os.path.join(os.getcwd(), "results"),
+    help="Specify the folder where the results will be saved."
+)
+
+keywords = st.text_area(
+    "Enter keywords (comma-separated):",
+    help="Enter keywords to search for in the Excel files. Separate multiple keywords with commas."
+)
+
+keyword_file = st.file_uploader(
+    "Or upload a .txt file with keywords:",
+    type=["txt"],
+    help="Upload a text file containing keywords (one keyword per line)."
+)
 
 if keyword_file:
     keywords = keyword_file.read().decode("utf-8").strip().replace("\n", ", ")
 
 keywords_list = [kw.lower().strip() for kw in keywords.split(",") if kw.strip()]
 
-if st.button("Start Extraction"):
+if st.button("Start Extraction", help="Click to start the extraction process."):
     if not folder_path or not dest_folder or not keywords_list:
         st.warning("Please provide all inputs!")
     else:
